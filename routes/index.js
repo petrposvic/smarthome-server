@@ -7,16 +7,13 @@ router.get('/', function(req, res, next) {
     .findAll()
     .then(function(objs) {
       var tmps = [], hmds = [];
-      for (var i = 0; i < objs.length; i++) {
+      var max = Math.max(0, objs.length - 200);
+      for (var i = max; i < objs.length; i++) {
         tmps.push(objs[i].temperature);
         hmds.push(objs[i].humidity);
       }
 
       var plot = require('plotter').plot;
-      plot({
-        data: { 'Temperature': tmps, 'Humidity': hmds },
-        filename: 'public/tmp/output.png'
-      });
       plot({
         data: { 'Temperature': tmps },
         filename: 'public/tmp/temperature.png'
@@ -25,7 +22,7 @@ router.get('/', function(req, res, next) {
         data: { 'Humidity': hmds },
         filename: 'public/tmp/humidity.png'
       });
-      res.render('index', { title: 'Express' });
+      res.render('index', { title: 'Smart Home', min:  objs[max].created_at, max: objs[objs.length - 1].created_at});
     });
 });
 

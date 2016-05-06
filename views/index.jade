@@ -2,7 +2,8 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
-  img(src="tmp/output.png")
   img(src="tmp/temperature.png")
   img(src="tmp/humidity.png")
+  ul
+    li= min
+    li= max
