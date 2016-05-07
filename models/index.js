@@ -39,6 +39,12 @@ var Beacon = sequelize.define('beacon', {
   }
 });
 
+var Alert = sequelize.define('alert', {
+  note: {
+    type: Sequelize.STRING
+  }
+});
+
 /*sequelize.sync({
   force: true
 }).then(function() {
@@ -50,14 +56,19 @@ var Beacon = sequelize.define('beacon', {
     noise: 1
   });
 }).then(function(obj) {
-  console.log(obj.get({
-    plain: true
-  }));
+  return Alert.create({
+    note: 'Beacon "Kocar" se vzdalil'
+  });
+}).then(function(obj) {
+  return Alert.create({
+    note: 'Beacon "Kocar" se objevil'
+  });
 });*/
 
 module.exports = {
   sequelize: sequelize,
   Sequelize: Sequelize,
-  Measurement: Measurement,
-  Beacon: Beacon
+  Alert: Alert,
+  Beacon: Beacon,
+  Measurement: Measurement
 };
