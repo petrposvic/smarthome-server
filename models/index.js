@@ -66,6 +66,20 @@ var Alert = sequelize.define('alert', {
   return Alert.create({
     note: 'Beacon "Kocar" se objevil'
   });
+}).then(function(obj) {
+  return Beacon.create({
+    uuid: 'kocar1',
+    tx: 6,
+    rssi: -75,
+    active: true
+  });
+}).then(function(obj) {
+  return Beacon.create({
+    uuid: 'kocar2',
+    tx: 6,
+    rssi: -75,
+    active: false
+  });
 });*/
 
 module.exports = {

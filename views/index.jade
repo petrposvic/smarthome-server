@@ -5,5 +5,5 @@ block content
   img(src="tmp/temperature.png")
   img(src="tmp/humidity.png")
   ul
-    li= min
-    li= max
+    each val, index in beacons
+      li= val.uuid + ': ' + (val.active ? 'active' : 'unknown') + ' in ' + val.created_at

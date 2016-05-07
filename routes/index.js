@@ -7,8 +7,7 @@ router.get('/', function(req, res, next) {
     .findAll()
     .then(function(objs) {
       var tmps = {}, hmds = {};
-      var max = Math.max(0, objs.length - 200);
-      for (var i = max; i < objs.length; i++) {
+      for (var i = Math.max(0, objs.length - 200); i < objs.length; i++) {
         var time = new Date(objs[i].created_at).getTime() / 1000;
         tmps[time] = objs[i].temperature;
         hmds[time] = objs[i].humidity;
@@ -25,7 +24,18 @@ router.get('/', function(req, res, next) {
         filename: 'public/tmp/humidity.png',
         time: 'hours'
       });
-      res.render('index', { title: 'Smart Home', min:  objs[max].created_at, max: objs[objs.length - 1].created_at});
+
+      db.Beacon
+        .findAll({
+          order: 'id DESC',
+          limit: 5
+        })
+        .then(function(beacons) {
+          res.render('index', {
+            title: 'Smart Home',
+            beacons: beacons
+          });
+        });
     });
 });
 
