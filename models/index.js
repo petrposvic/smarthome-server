@@ -28,7 +28,7 @@ var Measurement = sequelize.define('measurement', {
 });
 
 var Beacon = sequelize.define('beacon', {
-  name: {
+  uuid: {
     type: Sequelize.STRING
   },
   tx: {
@@ -36,6 +36,9 @@ var Beacon = sequelize.define('beacon', {
   },
   rssi: {
     type: Sequelize.INTEGER
+  },
+  active: {
+    type: Sequelize.BOOLEAN
   }
 });
 

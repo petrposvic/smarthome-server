@@ -11,19 +11,8 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var beacons = req.body.beacons;
-  var data = [];
-
-  for (var i = 0; i < beacons.length; i++) {
-    data.push({
-      name: beacons[i].id,
-      tx: beacons[i].tx,
-      rssi: beacons[i].rssi
-    });
-  }
-
   db.Beacon
-    .bulkCreate(data)
+    .create(req.body)
     .then(function(obj) {
       res
         .status(201)
