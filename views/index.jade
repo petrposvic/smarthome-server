@@ -3,7 +3,9 @@ extends layout
 block content
   h1= title
   img(src="tmp/temperature.png")
+  img(src="tmp/cpu.png")
   img(src="tmp/humidity.png")
+  img(src="tmp/stroller.png")
   ul
     each val, index in beacons
-      li= val.uuid + ': ' + (val.active ? 'active' : 'unknown') + ' in ' + val.created_at
+      li= val.created_at + ' (' + val.uuid + '): ' + (val.active ? 'active' : 'unknown') + ' ' + val.rssi
