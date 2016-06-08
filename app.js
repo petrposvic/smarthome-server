@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var alerts = require('./routes/alerts');
 var beacons = require('./routes/beacons');
 var measurements = require('./routes/measurements');
+var sleeps = require('./routes/sleeps');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/', routes);
 app.use('/api/alerts', alerts);
 app.use('/api/beacons', beacons);
 app.use('/api/measurements', measurements);
+app.use('/api/sleeps', sleeps);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

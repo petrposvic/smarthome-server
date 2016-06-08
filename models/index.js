@@ -48,6 +48,15 @@ var Alert = sequelize.define('alert', {
   }
 });
 
+var Sleep = sequelize.define('sleeps', {
+  device: {
+    type: Sequelize.STRING
+  },
+  value: {
+    type: Sequelize.INTEGER
+  }
+});
+
 /*sequelize.sync({
   force: true
 }).then(function() {
@@ -87,5 +96,6 @@ module.exports = {
   Sequelize: Sequelize,
   Alert: Alert,
   Beacon: Beacon,
-  Measurement: Measurement
+  Measurement: Measurement,
+  Sleep: Sleep
 };

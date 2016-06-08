@@ -16,6 +16,8 @@ router.get('/', function(req, res, next) {
       tmps['office'] = [];
       tmps['office_cpu'] = [];
       hmds['office'] = [];
+      tmps['wifi'] = [];
+      hmds['wifi'] = [];
 
       for (var i = 0; i < objs.length; i++) {
         var time = new Date(objs[i].created_at).getTime() / 1000 + 60 * 60 * 2;
@@ -23,13 +25,15 @@ router.get('/', function(req, res, next) {
           objs[i].device === 'livingroom' ||
           objs[i].device === 'livingroom_cpu' ||
           objs[i].device === 'office' ||
-          objs[i].device === 'office_cpu'
+          objs[i].device === 'office_cpu' ||
+          objs[i].device === 'wifi'
         ) {
           tmps[objs[i].device][time] = objs[i].temperature;
         }
         if (
             objs[i].device === 'livingroom' ||
-            objs[i].device === 'office'
+            objs[i].device === 'office' ||
+            objs[i].device === 'wifi'
         ) {
           hmds[objs[i].device][time] = objs[i].humidity;
         }
@@ -37,7 +41,7 @@ router.get('/', function(req, res, next) {
 
       var plot = require('plotter').plot;
       plot({
-        data: { 'Livingroom': tmps['livingroom'], 'Office': tmps['office'] },
+        data: { 'Livingroom': tmps['livingroom'], 'Office': tmps['office'], 'WiFi': tmps['wifi'] },
         filename: 'public/tmp/temperature.png',
         title: 'Temperature',
         time: 'hours'
@@ -49,7 +53,7 @@ router.get('/', function(req, res, next) {
         time: 'hours'
       });
       plot({
-        data: { 'Livingroom': hmds['livingroom'], 'Office': hmds['office'] },
+        data: { 'Livingroom': hmds['livingroom'], 'Office': hmds['office'], 'WiFi': hmds['wifi'] },
         filename: 'public/tmp/humidity.png',
         title: 'Humidity',
         time: 'hours'
@@ -57,27 +61,55 @@ router.get('/', function(req, res, next) {
 
       db.Beacon
         .findAll({
-          limit: 50,
+          limit: 200,
           order: 'created_at DESC'
         })
         .then(function(beacons) {
 
-          var dist = {};
+          var dist = [];
+          dist['livingroom'] = [];
+          dist['garage'] = [];
+          dist['gate'] = [];
+          dist['office'] = [];
           for (var i = 0; i < beacons.length; i++) {
             var time = new Date(beacons[i].created_at).getTime() / 1000 + 60 * 60 * 2;
-            dist[time] = beacons[i].rssi;
+            dist[beacons[i].uuid][time] = beacons[i].rssi;
           }
 
           plot({
-            data: { 'Stroller': dist },
+            data: { 'Livingroom': dist['livingroom'], 'Garage': dist['garage'], 'Gate': dist['gate'], 'Office': dist['office'] },
             filename: 'public/tmp/stroller.png',
+            title: 'Stroller',
             time: 'hours'
           });
 
-          res.render('index', {
-            title: 'Smart Home',
-            beacons: beacons
-          });
+          db.Sleep
+            .findAll({
+              limit: 200,
+              order: 'created_at DESC'
+            })
+            .then(function(sleeps) {console.log(JSON.stringify(sleeps));
+
+              var vals = [];
+              vals['petr'] = [];
+              for (var i = 0; i < sleeps.length; i++) {
+                var time = new Date(sleeps[i].created_at).getTime() / 1000 + 60 * 60 * 2;
+                vals[sleeps[i].device][time] = sleeps[i].value;
+              }
+
+              plot({
+                data: { 'Petr': vals['petr'] },
+                filename: 'public/tmp/sleep.png',
+                title: 'Sleep',
+                time: 'hours'
+              });
+
+              res.render('index', {
+                title: 'Smart Home',
+                beacons: beacons
+              });
+
+            });
         });
     });
 });
