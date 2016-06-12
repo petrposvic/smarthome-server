@@ -16,6 +16,8 @@ router.get('/', function(req, res, next) {
       tmps['office'] = [];
       tmps['office_cpu'] = [];
       hmds['office'] = [];
+      tmps['bedroom'] = [];
+      hmds['bedroom'] = [];
       tmps['wifi'] = [];
       hmds['wifi'] = [];
 
@@ -26,6 +28,7 @@ router.get('/', function(req, res, next) {
           objs[i].device === 'livingroom_cpu' ||
           objs[i].device === 'office' ||
           objs[i].device === 'office_cpu' ||
+          objs[i].device === 'bedroom' ||
           objs[i].device === 'wifi'
         ) {
           tmps[objs[i].device][time] = objs[i].temperature;
@@ -33,6 +36,7 @@ router.get('/', function(req, res, next) {
         if (
             objs[i].device === 'livingroom' ||
             objs[i].device === 'office' ||
+            objs[i].device === 'bedroom' ||
             objs[i].device === 'wifi'
         ) {
           hmds[objs[i].device][time] = objs[i].humidity;
@@ -41,7 +45,7 @@ router.get('/', function(req, res, next) {
 
       var plot = require('plotter').plot;
       plot({
-        data: { 'Livingroom': tmps['livingroom'], 'Office': tmps['office'], 'WiFi': tmps['wifi'] },
+        data: { 'Livingroom': tmps['livingroom'], 'Office': tmps['office'], 'Bedroom': tmps['bedroom'], 'WiFi': tmps['wifi'] },
         filename: 'public/tmp/temperature.png',
         title: 'Temperature',
         time: 'hours'
@@ -53,7 +57,7 @@ router.get('/', function(req, res, next) {
         time: 'hours'
       });
       plot({
-        data: { 'Livingroom': hmds['livingroom'], 'Office': hmds['office'], 'WiFi': hmds['wifi'] },
+        data: { 'Livingroom': hmds['livingroom'], 'Office': hmds['office'], 'Bedroom': hmds['bedroom'], 'WiFi': hmds['wifi'] },
         filename: 'public/tmp/humidity.png',
         title: 'Humidity',
         time: 'hours'
