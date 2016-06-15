@@ -43,22 +43,25 @@ router.get('/', function(req, res, next) {
         }
       }
 
-      var plot = require('plotter').plot;
+      var plot = require('../libs/plotter').plot;
       plot({
         data: { 'Livingroom': tmps['livingroom'], 'Office': tmps['office'], 'Bedroom': tmps['bedroom'], 'WiFi': tmps['wifi'] },
         filename: 'public/tmp/temperature.png',
+        width: 750,
         title: 'Temperature',
         time: 'hours'
       });
       plot({
         data: { 'Livingroom': tmps['livingroom_cpu'], 'Office': tmps['office_cpu'] },
         filename: 'public/tmp/cpu.png',
+        width: 750,
         title: 'CPU temperature',
         time: 'hours'
       });
       plot({
         data: { 'Livingroom': hmds['livingroom'], 'Office': hmds['office'], 'Bedroom': hmds['bedroom'], 'WiFi': hmds['wifi'] },
         filename: 'public/tmp/humidity.png',
+        width: 750,
         title: 'Humidity',
         time: 'hours'
       });
@@ -83,13 +86,14 @@ router.get('/', function(req, res, next) {
           plot({
             data: { 'Livingroom': dist['livingroom'], 'Garage': dist['garage'], 'Gate': dist['gate'], 'Office': dist['office'] },
             filename: 'public/tmp/stroller.png',
+            width: 750,
             title: 'Stroller',
             time: 'hours'
           });
 
           db.Sleep
             .findAll({
-              limit: 200,
+              limit: 150,
               order: 'created_at DESC'
             })
             .then(function(sleeps) {console.log(JSON.stringify(sleeps));
@@ -104,8 +108,11 @@ router.get('/', function(req, res, next) {
               plot({
                 data: { 'Petr': vals['petr'] },
                 filename: 'public/tmp/sleep.png',
+                width: 1500,
+                style: 'boxes',
                 title: 'Sleep',
-                time: 'hours'
+                time: 'hours',
+                others: ['set xtics 1800', 'set style fill solid']
               });
 
               res.render('index', {
