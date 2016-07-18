@@ -11,11 +11,18 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+  var device = req.body.device;
+  var t = req.body.temperature;
+  var h = req.body.humidity;
+  if (!device) device = req.body.dev;
+  if (!t) t = req.body.t;
+  if (!h) h = req.body.h;
+
   db.Measurement
     .create({
-      device: req.body.device,
-      temperature: req.body.temperature,
-      humidity: req.body.humidity
+      device: device,
+      temperature: t,
+      humidity: h
     })
     .then(function(obj) {
       res
