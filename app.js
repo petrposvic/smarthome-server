@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var plot = require('./libs/plotter').plot;
+var db = require('./models/index');
 var routes = require('./routes/index');
 var alerts = require('./routes/alerts');
 var beacons = require('./routes/beacons');
@@ -61,5 +63,127 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+setInterval(function() {
+  db.Measurement
+    .findAll({
+      limit: 500,
+      order: 'created_at DESC'
+    })
+    .then(function(objs) {
+      var tmps = [], hmds = [];
+      tmps['livingroom'] = [];
+      tmps['livingroom_cpu'] = [];
+      hmds['livingroom'] = [];
+      tmps['office'] = [];
+      tmps['office_cpu'] = [];
+      hmds['office'] = [];
+      tmps['bedroom'] = [];
+      hmds['bedroom'] = [];
+      tmps['bathroom'] = [];
+      hmds['bathroom'] = [];
+      tmps['birdhouse'] = [];
+      tmps['wifi'] = [];
+      hmds['wifi'] = [];
+      tmps['raspi3'] = [];
+      hmds['raspi3'] = [];
+
+      for (var i = 0; i < objs.length; i++) {
+        var time = new Date(objs[i].created_at).getTime() / 1000 + 60 * 60 * 2;
+        if (
+          objs[i].device === 'livingroom' ||
+          objs[i].device === 'livingroom_cpu' ||
+          objs[i].device === 'office' ||
+          objs[i].device === 'office_cpu' ||
+          objs[i].device === 'bedroom' ||
+          objs[i].device === 'bathroom' ||
+          objs[i].device === 'birdhouse' ||
+          objs[i].device === 'wifi' ||
+          objs[i].device === 'raspi3'
+        ) {
+          tmps[objs[i].device][time] = objs[i].temperature;
+        }
+        if (
+            objs[i].device === 'livingroom' ||
+            objs[i].device === 'office' ||
+            objs[i].device === 'bedroom' ||
+            objs[i].device === 'bathroom' ||
+            objs[i].device === 'wifi' ||
+            objs[i].device === 'raspi3'
+        ) {
+          hmds[objs[i].device][time] = objs[i].humidity;
+        }
+      }
+
+      plot({
+        data: {
+          'Livingroom': tmps['livingroom'],
+          'Office': tmps['office'],
+          'Bedroom': tmps['bedroom'],
+          'Bathroom': tmps['bathroom'],
+          // 'WiFi': tmps['wifi'],
+          'Raspi3': tmps['raspi3'],
+          'Birdhouse': tmps['birdhouse']
+        },
+        filename: 'public/tmp/temperature.png',
+        width: 750,
+        title: 'Temperature',
+        time: 'hours',
+        others: ['set key left top']
+      });
+      plot({
+        data: {
+          'Livingroom': tmps['livingroom_cpu'],
+          'Office': tmps['office_cpu']
+        },
+        filename: 'public/tmp/cpu.png',
+        width: 750,
+        title: 'CPU temperature',
+        time: 'hours',
+        others: ['set key left top']
+      });
+      plot({
+        data: {
+          'Livingroom': hmds['livingroom'],
+          'Office': hmds['office'],
+          'Bedroom': hmds['bedroom'],
+          'Bathroom': hmds['bathroom'],
+          // 'WiFi': hmds['wifi'],
+          'Raspi3': hmds['raspi3']
+        },
+        filename: 'public/tmp/humidity.png',
+        width: 750,
+        title: 'Humidity',
+        time: 'hours',
+        others: ['set key left top']
+      });
+    });
+
+  db.Sleep
+    .findAll({
+      limit: 150,
+      order: 'created_at DESC'
+    })
+    .then(function(sleeps) {
+
+      var vals = [];
+      vals['petr'] = [];
+      for (var i = 0; i < sleeps.length; i++) {
+        var time = new Date(sleeps[i].created_at).getTime() / 1000 + 60 * 60 * 2;
+        vals[sleeps[i].device][time] = sleeps[i].value;
+      }
+
+      plot({
+        data: { 'Petr': vals['petr'] },
+        filename: 'public/tmp/sleep.png',
+        width: 1500,
+        style: 'boxes',
+        title: 'Sleep',
+        time: 'hours',
+        others: ['set xtics 1800', 'set style fill solid']
+      });
+
+    });
+}, 60 * 1000);
 
 module.exports = app;

@@ -5,8 +5,4 @@ block content
   img(src="tmp/temperature.png")
   img(src="tmp/cpu.png")
   img(src="tmp/humidity.png")
-  img(src="tmp/stroller.png")
   img(src="tmp/sleep.png")
-  ul
-    each val, index in beacons
-      li= val.created_at + ' (' + val.uuid + '): ' + (val.active ? 'active' : 'unknown') + ' ' + val.rssi
