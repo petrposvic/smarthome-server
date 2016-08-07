@@ -72,24 +72,24 @@ setInterval(function() {
     })
     .then(function(objs) {
       var tmps = [], hmds = [];
-      tmps['livingroom'] = [];
-      tmps['livingroom_cpu'] = [];
-      hmds['livingroom'] = [];
-      tmps['office'] = [];
-      tmps['office_cpu'] = [];
-      hmds['office'] = [];
-      tmps['bedroom'] = [];
-      hmds['bedroom'] = [];
-      tmps['bathroom'] = [];
-      hmds['bathroom'] = [];
-      tmps['birdhouse'] = [];
-      tmps['wifi'] = [];
-      hmds['wifi'] = [];
-      tmps['raspi3'] = [];
-      hmds['raspi3'] = [];
+      tmps['livingroom'] = {};
+      tmps['livingroom_cpu'] = {};
+      hmds['livingroom'] = {};
+      tmps['office'] = {};
+      tmps['office_cpu'] = {};
+      hmds['office'] = {};
+      tmps['bedroom'] = {};
+      hmds['bedroom'] = {};
+      tmps['bathroom'] = {};
+      hmds['bathroom'] = {};
+      tmps['birdhouse'] = {};
+      tmps['wifi'] = {};
+      hmds['wifi'] = {};
+      tmps['raspi3'] = {};
+      hmds['raspi3'] = {};
 
       for (var i = 0; i < objs.length; i++) {
-        var time = new Date(objs[i].created_at).getTime() / 1000 + 60 * 60 * 2;
+        var time = Math.round(new Date(objs[i].created_at).getTime() / 1000 + 60 * 60 * 2);
         if (
           objs[i].device === 'livingroom' ||
           objs[i].device === 'livingroom_cpu' ||
@@ -167,9 +167,9 @@ setInterval(function() {
     .then(function(sleeps) {
 
       var vals = [];
-      vals['petr'] = [];
+      vals['petr'] = {};
       for (var i = 0; i < sleeps.length; i++) {
-        var time = new Date(sleeps[i].created_at).getTime() / 1000 + 60 * 60 * 2;
+        var time = Math.round(new Date(sleeps[i].created_at).getTime() / 1000 + 60 * 60 * 2);
         vals[sleeps[i].device][time] = sleeps[i].value;
       }
 
