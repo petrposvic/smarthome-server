@@ -1,1 +1,1 @@
-# smarthome-server
+# Smarthome Server
